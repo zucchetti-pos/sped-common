@@ -1,0 +1,11 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Parameter \\#5 \\$oneWay \\(int\\) of method NFePHP\\\\Common\\\\Soap\\\\SoapClientExtended\\:\\:__doRequest\\(\\) should be compatible with parameter \\$oneWay \\(bool\\) of method SoapClient\\:\\:__doRequest\\(\\)$#"
+			count: 1
+			path: src/Soap/SoapClientExtended.php
+
+		-
+			message: "#^Parameter \\#5 \\$oneWay of method SoapClient\\:\\:__doRequest\\(\\) expects bool, int given\\.$#"
+			count: 1
+			path: src/Soap/SoapClientExtended.php
