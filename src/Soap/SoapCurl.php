@@ -28,7 +28,7 @@ class SoapCurl extends SoapBase implements SoapInterface
      * Constructor
      * @param Certificate $certificate
      */
-    public function __construct(Certificate $certificate = null)
+    public function __construct(?Certificate $certificate = null)
     {
         parent::__construct($certificate);
     }
@@ -147,6 +147,9 @@ class SoapCurl extends SoapBase implements SoapInterface
         }
         if (empty($this->responseBody)) {
             throw SoapException::soapFault('Retorno da SEFAZ VAZIO', 99);
+        }
+        if (!Validator::isXML($this->responseBody)) {
+            throw SoapException::soapFault('O retorno não é um XML ' . $this->responseBody, 99);
         }
         return $this->responseBody;
     }

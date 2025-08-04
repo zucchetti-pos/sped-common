@@ -197,7 +197,7 @@ class DOMImproved extends DOMDocument
      * @param string $msg
      * @return void
      */
-    public function appChild(DOMElement &$parent, DOMElement $child = null, $msg = '')
+    public function appChild(DOMElement &$parent, ?DOMElement $child = null, $msg = '')
     {
         if (empty($child)) {
             //$this->errors[] = $msg;
@@ -249,7 +249,7 @@ class DOMImproved extends DOMDocument
      * @param string $msg
      * @return void
      */
-    public function appChildBefore(DOMElement &$parent, DOMElement $child = null, $before = '', $msg = '')
+    public function appChildBefore(DOMElement &$parent, ?DOMElement $child = null, $before = '', $msg = '')
     {
         if (
             empty($child) ||
@@ -279,5 +279,23 @@ class DOMImproved extends DOMDocument
             }
         }
         return $num;
+    }
+
+    /**
+     * Adicona um atributo a uma tag
+     * @param \DOMElement $node
+     * @param string $name
+     * @param string|null $value
+     * @return void
+     * @throws \DOMException
+     */
+    public function addAttribute(\DOMElement &$node, string $name, ?string $value = null)
+    {
+        if (is_null($value)) {
+            return;
+        }
+        $att = $this->createAttribute($name);
+        $att->value = $value;
+        $node->appendChild($att);
     }
 }
