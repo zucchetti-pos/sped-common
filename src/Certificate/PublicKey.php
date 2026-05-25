@@ -114,8 +114,11 @@ CONTENT;
             $txt = explode("\n", $authority);
             $this->caurl = $this->between($txt[0], 'http', ['.p7b', '.p7c']);
         }
-        $this->validFrom = \DateTime::createFromFormat('ymdHis\Z', $detail['validFrom']);
-        $this->validTo = \DateTime::createFromFormat('ymdHis\Z', $detail['validTo']);
+        // openssl_x509_parse retorna validFrom/validTo em UTC (sufixo "Z" = Zulu).
+        // Sem o DateTimeZone explícito, createFromFormat usa a tz default do PHP, deturpando o valor absoluto.
+        $utc = new \DateTimeZone('UTC');
+        $this->validFrom = \DateTime::createFromFormat('ymdHis\Z', $detail['validFrom'], $utc);
+        $this->validTo = \DateTime::createFromFormat('ymdHis\Z', $detail['validTo'], $utc);
         if (isset($detail['name'])) {
             $arrayName = explode("/", $detail["name"]);
             $arrayName = array_reverse($arrayName);
