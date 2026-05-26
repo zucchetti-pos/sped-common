@@ -36,9 +36,17 @@ class DomImprovedTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertTrue(true);
     }
-    public function testGetChave()
+    public function testGetChaveWithAlphanumericCnpj()
     {
-        $this->assertTrue(true);
+        $xml = '<NFe xmlns="http://www.portalfiscal.inf.br/nfe">'
+            . '<infNFe Id="NFe520604VL1J4ZDW000163550120000007801267301615" versao="4.00"></infNFe>'
+            . '</NFe>';
+        $dom = new DOMImproved();
+        $dom->loadXMLString($xml);
+        $this->assertEquals(
+            '520604VL1J4ZDW000163550120000007801267301615',
+            $dom->getChave()
+        );
     }
     public function testGetNode()
     {

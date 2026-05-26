@@ -144,8 +144,8 @@ class DOMImproved extends DOMDocument
         $node = $this->getElementsByTagName($nodeName)->item(0);
         if (!empty($node)) {
             $chaveId = $node->getAttribute("Id");
-            $chave =  preg_replace('/[^0-9]/', '', $chaveId);
-            return $chave;
+
+            return Keys::extractAccessKey($chaveId);
         }
         return '';
     }

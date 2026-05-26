@@ -16,6 +16,8 @@ namespace NFePHP\Common;
 
 class Keys
 {
+    public const ACCESS_KEY_PATTERN = '/^[0-9]{6}[A-Z0-9]{12}[0-9]{26}$/';
+
     /**
      * Build 44 digits keys to NFe, NFCe, CTe and MDFe
      * @param string $cUF UF number
@@ -71,7 +73,7 @@ class Keys
      */
     public static function isValid($key)
     {
-        if (strlen($key) != 44) {
+        if (strlen($key) != 44 || !preg_match(self::ACCESS_KEY_PATTERN, $key)) {
             return false;
         }
         $cDV = substr($key, -1);
@@ -84,29 +86,36 @@ class Keys
 
     /**
      * This method calculates verifying digit
-     * @param string $key
+     * @param string $accessKeyWithoutVerificationDigit
      * @return string
      */
-    public static function verifyingDigit($key)
+    public static function verifyingDigit($accessKeyWithoutVerificationDigit)
     {
-        if (strlen($key) != 43) {
+        if (strlen($accessKeyWithoutVerificationDigit) != 43) {
             return '';
         }
-        $multipliers = [2, 3, 4, 5, 6, 7, 8, 9];
-        $iCount = 42;
-        $weightedSum = 0;
-        while ($iCount >= 0) {
-            for ($mCount = 0; $mCount < 8 && $iCount >= 0; $mCount++) {
-                $sub = ord((string) $key[$iCount]) - 48;
-                $weightedSum +=  $sub * $multipliers[$mCount];
-                $iCount--;
-            }
+
+        $multipliers = [
+            4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4,
+            3, 2, 9, 8, 7, 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2,
+        ];
+
+        $baseValue = 48;
+        $accessKeyLengthWithoutVerificationDigit = 43;
+
+        $sum = 0;
+
+        for ($i = 0; $i < $accessKeyLengthWithoutVerificationDigit; $i++) {
+            $asciiDigit = ord($accessKeyWithoutVerificationDigit[$i]) - $baseValue;
+
+            $sum += $asciiDigit * $multipliers[$i];
         }
-        $vdigit = 11 - ($weightedSum % 11);
-        if ($vdigit > 9) {
-            $vdigit = 0;
-        }
-        return (string) $vdigit;
+
+        $digit = ($sum % 11) < 2
+            ? 0
+            : 11 - ($sum % 11);
+
+        return (string) $digit;
     }
 
     /**
@@ -143,6 +152,24 @@ class Keys
             '67890123', '78901234', '89012345', '90123456', '01234567'
         ];
         return !in_array($cnf, $defs);
+    }
+
+    /**
+     * Return access key from string
+     * @param string $string
+     * @return string
+     */
+    public static function extractAccessKey($string)
+    {
+        $regex = '/[0-9]{6}[A-Z0-9]{12}[0-9]{26}/';
+
+        if (preg_match($regex, $string, $matches)) {
+            $extractedValue = $matches[0];
+
+            return $extractedValue;
+        }
+
+        return '';
     }
 
     /**

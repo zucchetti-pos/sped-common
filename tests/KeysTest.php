@@ -80,4 +80,22 @@ class KeysTest extends \PHPUnit\Framework\TestCase
         $expected = '';
         $this->assertEquals($expected, $actual);
     }
+
+    public function testIsValidAlphanumericKey()
+    {
+        $key = '520604VL1J4ZDW000163550120000007801267301615';
+        $this->assertTrue(Keys::isValid($key));
+    }
+
+    public function testBuildWithAlphanumericCnpj()
+    {
+        $key = Keys::build('52', '06', '04', 'VL1J4ZDW000163', '55', '012', '000000780', '1', '26730161');
+        $this->assertEquals('520604VL1J4ZDW000163550120000007801267301615', $key);
+    }
+
+    public function testExtractAccessKey()
+    {
+        $id = 'NFe520604VL1J4ZDW000163550120000007801267301615';
+        $this->assertEquals('520604VL1J4ZDW000163550120000007801267301615', Keys::extractAccessKey($id));
+    }
 }
